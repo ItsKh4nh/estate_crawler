@@ -1,10 +1,10 @@
 import pandas as pd
 from bs4 import BeautifulSoup
+import requests
 from tqdm import tqdm
-import cloudscraper
-import time
 
 base_url = "https://batdongsan.com.vn/nha-dat-ban"
+
 
 def extract_data_from_product(product):
     def extract_element_text(parent, selector):
@@ -36,18 +36,18 @@ def extract_data_from_product(product):
     return data
 
 
-def crawl_all_pages(base_url):
-    scraper = cloudscraper.create_scraper()
+def crawl_with_zenrows(url):
     all_products = []
-    page_number = 1
-    crawl_start_time = time.time()
-    time_interval = 300
-    
-    with tqdm() as pbar:
-        while True:
-            url = f"{base_url}/p{page_number}"
-            response = scraper.get(url)
-            
+    with tqdm(total=50) as pbar:
+        for page_number in range(1, 51):
+            params = {
+                'url': f"{url}/p{page_number}",
+                'apikey': 'fbda2bc1d8a35edf5bfdf3f2dad6b66de5c73e50',
+                'premium_proxy': 'true',
+            }
+            response = requests.get(
+                'https://api.zenrows.com/v1/', params=params)
+
             if response.status_code == 200:
                 html_content = response.text
                 soup = BeautifulSoup(html_content, "html.parser")
@@ -55,31 +55,23 @@ def crawl_all_pages(base_url):
 
                 for product in product_elements:
                     all_products.append(extract_data_from_product(product))
-
-                page_number += 1
-
-                next_page_link = soup.find("link", {"rel": "next"})
-                if not next_page_link:
-                    break
-                
-                elapsed_time = time.time() - crawl_start_time
-                if elapsed_time >= time_interval:
-                    time.sleep(30)
-
             else:
+                print(f"Failed to fetch data from page {page_number}")
                 break
+
             pbar.update(1)
 
     return all_products
 
-all_products = crawl_all_pages(base_url)
+
+all_products = crawl_with_zenrows(base_url)
 
 if all_products:
     df = pd.DataFrame(all_products)
 
     df.to_csv("products_data.csv", index=False)
-    print("Dữ liệu từ trang đầu tiên đã được lưu vào file 'products-data.csv'")
+    print("Data from 50 pages saved to 'products_data.csv'")
     df.to_json("products_data.json", orient="records")
-    print("Dữ liệu từ trang đầu tiên đã được lưu vào file 'products_data.json'")
+    print("Data from 50 pages saved to 'products_data.json'")
 else:
-    print("Không có dữ liệu để lưu.")
+    print("No data to save.")
