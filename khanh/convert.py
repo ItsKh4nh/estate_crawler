@@ -9,12 +9,11 @@ def convert_price(price_str):
     elif "triệu" in price_str:
         return int(
             float(price_str.replace(" triệu", "").replace(".", "").replace(",", "."))
-            * 1000000
+            * 1e6
         )
     elif "tỷ" in price_str:
         return int(
-            float(price_str.replace(" tỷ", "").replace(".", "").replace(",", "."))
-            * 1000000000
+            float(price_str.replace(" tỷ", "").replace(".", "").replace(",", ".")) * 1e9
         )
     else:
         return 0
