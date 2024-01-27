@@ -22,8 +22,12 @@ def extract_data(product):
         return extract_element(parent, "span.pr-title.js__card-title", "aria-label")
 
     def extract_image_data(parent):
-        image_data = parent.select_one("div.re__card-image img[data-img]")
-        return image_data["data-img"] if image_data else None
+        image_data = parent.select_one("div.re__card-image img")
+        return (
+            image_data["data-img"]
+            if image_data and "data-img" in image_data.attrs
+            else None
+        )
 
     data = {
         "prid": product.get("prid"),
@@ -54,7 +58,7 @@ def crawl_with_zenrows(url, num_pages=50):
         for page_number in range(1, num_pages + 1):
             params = {
                 "url": f"{url}/p{page_number}",
-                "apikey": "f972a85f9723043f2ee26d4f5b158a25bc2d1ccf",
+                "apikey": "ae2f104a13b67d0c5e17114e630974f58927efd2",
                 "premium_proxy": "true",
             }
             response = requests.get("https://api.zenrows.com/v1/", params=params)
@@ -80,7 +84,7 @@ all_products = crawl_with_zenrows(base_url, num_pages=50)
 if all_products:
     df = pd.DataFrame(all_products)
 
-    csv_path = os.path.join("khanh", "test.csv")
+    csv_path = os.path.join("khanh", "data.csv")
 
     df.to_csv(csv_path, index=False)
     print(f"Data saved to '{csv_path}'")

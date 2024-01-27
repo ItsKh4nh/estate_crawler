@@ -24,7 +24,7 @@ def convert_acreage(acreage_str):
     )
 
 
-conn = sqlite3.connect("demo_web/test.db")
+conn = sqlite3.connect("demo_web/data.db")
 cursor = conn.cursor()
 
 with open("quan/bat_dong_san_vn.json", "r", encoding="utf-8") as file:
@@ -41,20 +41,30 @@ for item in data:
         price_per_m2 = (
             round(price / acreage) if price and acreage and acreage != 0 else 0
         )
-        description, main_image, source = (
+        description, main_image, product_url, source = (
             item.get("description", ""),
             item.get("image_url", ""),
+            item.get("product_link", ""),
             "https://batdongsan.vn/",
         )
 
         cursor.execute(
-            "INSERT INTO products (title, price, acreage, price_per_m2, description, main_image, source) VALUES (?, ?, ?, ?, ?, ?, ?)",
-            (title, price, acreage, price_per_m2, description, main_image, source),
+            "INSERT INTO products (title, price, acreage, price_per_m2, description, main_image, product_url, source) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            (
+                title,
+                price,
+                acreage,
+                price_per_m2,
+                description,
+                main_image,
+                product_url,
+                source,
+            ),
         )
 
 conn.commit()
 conn.close()
 
 print(
-    f"Data from 'quan/bat_dong_san_vn.json' has been imported into SQLite database 'demo_web/test.db'."
+    f"Data from 'quan/bat_dong_san_vn.json' has been imported into SQLite database 'demo_web/data.db'."
 )

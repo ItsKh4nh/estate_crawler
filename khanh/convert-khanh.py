@@ -70,6 +70,10 @@ df["source"] = "https://batdongsan.com.vn/"
 
 db_file = os.path.join("demo_web", "data.db")
 
+if not os.path.exists(db_file):
+    conn = sqlite3.connect(db_file)
+    conn.close()
+
 conn = sqlite3.connect(db_file)
 df.to_sql(
     "products",

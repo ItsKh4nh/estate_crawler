@@ -25,12 +25,19 @@ def convert_area(area_str):
 
 def extract_location(address):
     parts = address.split(", ")
-    district = parts[-2].replace("Quận", "").replace("Huyện", "").strip()
-    city = parts[-1].replace("Tỉnh", "").replace("Thành phố", "").strip()
+    district_part = parts[-2].replace("Quận", "").replace("Huyện", "").strip()
+    if any(char.isdigit() for char in district_part):
+        district = parts[-2].strip()
+    else:
+        district = district_part
+
+    city = (
+        parts[-1].replace("Tỉnh", "").replace("Thành phố", "").replace("TP", "").strip()
+    )
     return district, city
 
 
-conn = sqlite3.connect("demo_web/test.db")
+conn = sqlite3.connect("demo_web/data.db")
 cursor = conn.cursor()
 
 with open("VietAnh/Bds1.json", "r", encoding="utf-8") as file:
@@ -81,5 +88,5 @@ conn.commit()
 conn.close()
 
 print(
-    f"Data from 'VietAnh/Bds1.json' has been imported into SQLite database 'demo_web/test.db'."
+    f"Data from 'VietAnh/Bds1.json' has been imported into SQLite database 'demo_web/data.db'."
 )

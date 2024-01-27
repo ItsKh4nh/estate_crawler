@@ -12,24 +12,52 @@
   <body>
     <div class="container">
       <h1>Real Estate Products</h1>
+      <form method="POST" action="{{ url_for('search') }}">
+        <input type="text" name="search_query" placeholder="Tìm kiếm" />
+        <button type="submit">Tìm kiếm</button>
+      </form>
       <div class="product-list">
         {% for product in products %}
         <div
           class="product-item"
           onclick="redirectToProduct('{{ product[10] }}')"
         >
-          <img src="{{ product[11] }}" alt="Product Image" />
+          <div class="product-image">
+            <img src="{{ product[11] }}" alt="Product Image" />
+          </div>
           <div class="product-details">
             <h2>{{ product[1] }}</h2>
-            <p>Location: {{ product[2] }}, {{ product[3] }}</p>
-            <p>Time Published: {{ product[4] }}</p>
-            <p>Price: {{ product[5] }}</p>
-            <p>Acreage: {{ product[6] }}</p>
-            <p>Price per m2: {{ product[7] }}</p>
-            <p>Bedrooms: {{ product[8] }}</p>
-            <p>Bathrooms: {{ product[9] }}</p>
-            <p>Description: {{ product[12] }}</p>
-            <p>Source: {{ product[13] }}</p>
+            <p>Vị trí: {{ product[2] }}, {{ product[3] }}</p>
+            <p>Ngày đăng: {{ product[4] }}</p>
+            <p>Giá: {{ product[5] }}</p>
+            <p>Diện tích: {{ product[6] }} m²</p>
+            <p>Giá/m²: {{ product[7] }}/m²</p>
+            <p>Số phòng ngủ: {{ product[8] }}</p>
+            <p>Số phòng tắm: {{ product[9] }}</p>
+            <p>Mô tả: {{ product[12] }}</p>
+            <div class="logo">
+              {% if product[13] == 'https://batdongsan.com.vn/' %}
+              <img
+                src="{{ url_for('static', filename='1.svg') }}"
+                alt="Logo 1"
+              />
+              {% elif product[13] == 'https://batdongsan.vn/' %}
+              <img
+                src="{{ url_for('static', filename='2.png') }}"
+                alt="Logo 2"
+              />
+              {% elif product[13] == 'https://homedy.com/' %}
+              <img
+                src="{{ url_for('static', filename='3.svg') }}"
+                alt="Logo 3"
+              />
+              {% elif product[13] == 'https://alonhadat.com.vn/' %}
+              <img
+                src="{{ url_for('static', filename='4.png') }}"
+                alt="Logo 4"
+              />
+              {% endif %}
+            </div>
           </div>
         </div>
         {% endfor %}
